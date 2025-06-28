@@ -76,7 +76,12 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           <div className="prose prose-invert max-w-none text-gray-300">
             <ReactMarkdown
               components={{
-                code({ node, inline, className, children, ...props }) {
+                code({
+                  inline,
+                  className,
+                  children,
+                  ...props
+                }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
                   const match = /language-(\w+)/.exec(className || "")
                   const codeId = `code-${Math.random().toString(36).substr(2, 9)}`
 
@@ -94,7 +99,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
                         </Button>
                       </div>
                       <SyntaxHighlighter
-                        style={atomDark}
+                        style={atomDark as any}
                         language={match[1]}
                         PreTag="div"
                         className="rounded-b-md !mt-0 !bg-black/50"
