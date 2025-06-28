@@ -2,13 +2,13 @@
 
 import Image from "next/image"
 import { formatDistanceToNow } from "date-fns"
-import ReactMarkdown from "react-markdown"
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import { Copy, Check } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import FileAttachment from "@/components/chat/file-attachment"
+import ReactMarkdown from "react-markdown"
+import SyntaxHighlighter from "react-syntax-highlighter"
 
 interface Sender {
   name: string
