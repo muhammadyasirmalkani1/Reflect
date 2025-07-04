@@ -144,7 +144,7 @@ export default function APIDocumentationPage() {
               </CardHeader>
               <CardContent>
                 <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                  <code>{`{
+                  <code>{String.raw`{
   "success": true,
   "data": {},
   "message": "string"
@@ -247,7 +247,7 @@ export default function APIDocumentationPage() {
             </CardHeader>
             <CardContent>
               <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                <code>{`// Request
+                <code>{String.raw`// Request
 curl -X POST https://api.reflectsaas.com/v1/notes
   -H "Authorization: Bearer YOUR_API_KEY"
   -H "Content-Type: application/json"
@@ -274,7 +274,7 @@ curl -X POST https://api.reflectsaas.com/v1/notes
             </CardHeader>
             <CardContent>
               <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                <code>{`// Request
+                <code>{String.raw`// Request
 curl -X POST https://api.reflectsaas.com/v1/search
   -H "Authorization: Bearer YOUR_API_KEY"
   -H "Content-Type: application/json"
@@ -398,7 +398,7 @@ curl -X POST https://api.reflectsaas.com/v1/search
               <div>
                 <h4 className="font-medium mb-3">Signature Verification</h4>
                 <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                  <code>{`// Node.js signature verification
+                  <code>{String.raw`// Node.js signature verification
 const crypto = require('crypto');
 const signature  = req.headers['x-reflect-signature'];
 const payload    = JSON.stringify(req.body);
@@ -419,7 +419,7 @@ const isValid = crypto.timingSafeEqual(
               <div>
                 <h4 className="font-medium mb-3">Python Signature Verification</h4>
                 <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                  <code>{`# Python signature verification
+                  <code>{String.raw`# Python signature verification
 import hmac
 import hashlib
 import json
@@ -470,7 +470,7 @@ def verify_webhook_signature(payload, signature, secret):
             </CardHeader>
             <CardContent className="space-y-4">
               <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                <code>{`{
+                <code>{String.raw`{
   "id": "evt_1234567890",
   "event": "note.created",
   "timestamp": "2024-01-15T10:30:00Z",
@@ -543,7 +543,7 @@ def verify_webhook_signature(payload, signature, secret):
             </CardHeader>
             <CardContent className="space-y-4">
               <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                <code>{`{
+                <code>{String.raw`{
   "url": "https://your-app.com/webhooks/reflect",
   "events": ["note.created", "note.updated"],
   "filters": {
