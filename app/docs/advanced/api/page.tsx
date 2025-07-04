@@ -1,600 +1,295 @@
-"use client";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Key, Shield, Zap, ExternalLink, Book, Terminal, Globe, Lock } from "lucide-react"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import {
-  Code,
-  Key,
-  Zap,
-  Shield,
-  Globe,
-  Webhook,
-  Copy,
-  ExternalLink,
-} from "lucide-react";
-import { useState } from "react";
-
-export default function APIDocsPage() {
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-
-  const copyToClipboard = (code: string, id: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(id);
-    setTimeout(() => setCopiedCode(null), 2000);
-  };
-
+export default function APIDocumentationPage() {
   const endpoints = [
     {
       method: "GET",
       path: "/api/v1/notes",
       description: "Retrieve all notes with optional filtering",
       auth: "Required",
-      params: [
-        "limit",
-        "offset",
-        "search",
-        "tags",
-        "created_after",
-        "updated_after",
-      ],
-      response: {
-        data: [
-          {
-            id: "note_123",
-            title: "My Note",
-            content: "Note content...",
-            tags: ["important", "project"],
-            created_at: "2024-01-15T10:30:00Z",
-            updated_at: "2024-01-15T14:20:00Z",
-          },
-        ],
-        meta: {
-          total: 42,
-          page: 1,
-          per_page: 20,
-          total_pages: 3,
-        },
-      },
+      params: ["limit", "offset", "search", "tags"],
     },
     {
       method: "POST",
       path: "/api/v1/notes",
       description: "Create a new note",
       auth: "Required",
-      params: ["title", "content", "tags", "connections", "template_id"],
-      response: {
-        id: "note_124",
-        title: "New Note",
-        content: "Fresh content...",
-        tags: ["new"],
-        created_at: "2024-01-15T15:00:00Z",
-      },
+      params: ["title", "content", "tags", "connections"],
     },
     {
       method: "GET",
-      path: "/api/v1/notes/:id",
-      description: "Retrieve a specific note with full details",
+      path: "/api/v1/notes/{id}",
+      description: "Retrieve a specific note by ID",
       auth: "Required",
-      params: ["include_connections", "include_backlinks", "include_history"],
-      response: {
-        id: "note_123",
-        title: "My Note",
-        content: "Detailed content...",
-        connections: ["note_456", "note_789"],
-        backlinks: ["note_101", "note_102"],
-      },
-    },
-  ];
-
-  const codeExamples = {
-    javascript: `// Initialize Reflect API client
-import { ReflectAPI } from '@reflect/api';
-
-const reflect = new ReflectAPI('your-api-key');
-
-// Create a new note
-const note = await reflect.notes.create({
-  title: 'My Project Note',
-  content: 'This is my project planning note...',
-  tags: ['project', 'planning']
-});
-
-// Search notes
-const results = await reflect.notes.search({
-  query: 'project planning',
-  tags: ['project'],
-  limit: 10
-});
-
-// Create connections between notes
-await reflect.connections.create({
-  source_id: note.id,
-  target_id: 'existing_note_id',
-  type: 'relates_to'
-});`,
-    python: `# Install: pip install reflect-api
-from reflect import ReflectAPI
-
-# Initialize client
-reflect = ReflectAPI('your-api-key')
-
-# Create a note
-note = reflect.notes.create(
-    title='Research Note',
-    content='My research findings...',
-    tags=['research', 'important']
-)
-
-# Get all notes with filtering
-notes = reflect.notes.list(
-    search='research',
-    tags=['important'],
-    limit=20
-)
-
-# Update a note
-updated_note = reflect.notes.update(
-    note_id='note_123',
-    content='Updated research content...'
-)`,
-    curl: `# Get all notes
-curl -H "Authorization: Bearer YOUR_API_KEY" \\
-     -H "Content-Type: application/json" \\
-     "https://api.reflect.app/v1/notes?limit=10&tags=project"
-
-# Create a new note
-curl -X POST \\
-     -H "Authorization: Bearer YOUR_API_KEY" \\
-     -H "Content-Type: application/json" \\
-     -d '{
-       "title": "API Test Note",
-       "content": "Created via API",
-       "tags": ["api", "test"]
-     }' \\
-     "https://api.reflect.app/v1/notes"
-
-# Search notes
-curl -H "Authorization: Bearer YOUR_API_KEY" \\
-     "https://api.reflect.app/v1/search?q=project&type=notes"`,
-  };
-
-  const webhookEvents = [
-    {
-      event: "note.created",
-      description: "Triggered when a new note is created",
-      payload: "Complete note object with metadata",
+      params: ["include_connections", "include_metadata"],
     },
     {
-      event: "note.updated",
-      description: "Triggered when a note is modified",
-      payload: "Updated note object with change details",
+      method: "PUT",
+      path: "/api/v1/notes/{id}",
+      description: "Update an existing note",
+      auth: "Required",
+      params: ["title", "content", "tags", "connections"],
     },
     {
-      event: "note.deleted",
-      description: "Triggered when a note is deleted",
-      payload: "Note ID and deletion metadata",
+      method: "DELETE",
+      path: "/api/v1/notes/{id}",
+      description: "Delete a note",
+      auth: "Required",
+      params: [],
     },
     {
-      event: "connection.created",
-      description: "Triggered when notes are connected",
-      payload: "Connection object with source and target",
+      method: "GET",
+      path: "/api/v1/connections",
+      description: "Retrieve note connections and graph data",
+      auth: "Required",
+      params: ["note_id", "depth", "type"],
     },
     {
-      event: "tag.created",
-      description: "Triggered when a new tag is created",
-      payload: "Tag object with usage statistics",
+      method: "POST",
+      path: "/api/v1/search",
+      description: "Search notes with AI-powered semantic search",
+      auth: "Required",
+      params: ["query", "limit", "semantic", "filters"],
     },
-  ];
+  ]
 
   const getMethodColor = (method: string) => {
     switch (method) {
       case "GET":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+        return "bg-green-100 text-green-800"
       case "POST":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+        return "bg-blue-100 text-blue-800"
       case "PUT":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+        return "bg-yellow-100 text-yellow-800"
       case "DELETE":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+        return "bg-red-100 text-red-800"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
+        return "bg-gray-100 text-gray-800"
     }
-  };
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <Code className="h-8 w-8 text-blue-600" />
-          <h1 className="text-4xl font-bold">Reflect API Documentation</h1>
-        </div>
-        <p className="text-xl text-muted-foreground max-w-3xl">
-          Build powerful integrations with the Reflect API. Access notes,
-          connections, search, and more programmatically with our RESTful API.
+    <div className="max-w-4xl mx-auto p-6 space-y-8">
+      <div className="space-y-4">
+        <h1 className="text-4xl font-bold">API Documentation</h1>
+        <p className="text-xl text-muted-foreground">
+          Complete reference for the ReflectSaaS REST API. Build powerful integrations and automate your workflow.
         </p>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid md:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Globe className="h-5 w-5 text-blue-600" />
-              REST API
-            </CardTitle>
-            <CardDescription>Full HTTP API with JSON responses</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Webhook className="h-5 w-5 text-green-600" />
-              Webhooks
-            </CardTitle>
-            <CardDescription>Real-time event notifications</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Shield className="h-5 w-5 text-purple-600" />
-              Secure
-            </CardTitle>
-            <CardDescription>API key authentication & HTTPS</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Zap className="h-5 w-5 text-orange-600" />
-              Rate Limited
-            </CardTitle>
-            <CardDescription>1000 requests/hour per API key</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
+      <Alert>
+        <Shield className="h-4 w-4" />
+        <AlertDescription>
+          All API endpoints require authentication. Get your API key from the{" "}
+          <a href="/settings/api" className="text-blue-600 hover:underline">
+            settings page
+          </a>
+          .
+        </AlertDescription>
+      </Alert>
 
-      <Tabs defaultValue="getting-started" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="getting-started">Quick Start</TabsTrigger>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="authentication">Auth</TabsTrigger>
           <TabsTrigger value="endpoints">Endpoints</TabsTrigger>
           <TabsTrigger value="examples">Examples</TabsTrigger>
           <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
-          <TabsTrigger value="sdks">SDKs</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="getting-started" className="space-y-6">
+        <TabsContent value="overview" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="h-5 w-5" />
-                Quick Start Guide
+              <CardTitle className="flex items-center">
+                <Globe className="mr-2 h-5 w-5" />
+                Base URL
               </CardTitle>
-              <CardDescription>
-                Get up and running with the Reflect API in minutes
-              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">1. Get Your API Key</h4>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Generate an API key from your account settings to
-                    authenticate your requests.
-                  </p>
-                  <Button size="sm" className="mb-4">
-                    <Key className="h-4 w-4 mr-2" />
-                    Generate API Key
-                  </Button>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">
-                    2. Make Your First Request
-                  </h4>
-                  <div className="bg-muted rounded-lg p-3 relative">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="absolute top-2 right-2 h-6 w-6 p-0"
-                      onClick={() =>
-                        copyToClipboard(
-                          'curl -H "Authorization: Bearer YOUR_API_KEY" https://api.reflect.app/v1/notes',
-                          "first-request"
-                        )
-                      }
-                    >
-                      {copiedCode === "first-request" ? (
-                        "✓"
-                      ) : (
-                        <Copy className="h-3 w-3" />
-                      )}
-                    </Button>
-                    <code className="text-sm">
-                      {`curl -H "Authorization: Bearer YOUR_API_KEY" \\
-     https://api.reflect.app/v1/notes`}
-                    </code>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div>
-                <h4 className="font-semibold mb-3">Base URL & Versioning</h4>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-sm font-medium mb-1">Base URL</p>
-                    <code className="text-sm bg-muted px-2 py-1 rounded">
-                      https://api.reflect.app
-                    </code>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium mb-1">Current Version</p>
-                    <code className="text-sm bg-muted px-2 py-1 rounded">
-                      v1
-                    </code>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium mb-1">Content Type</p>
-                    <code className="text-sm bg-muted px-2 py-1 rounded">
-                      application/json
-                    </code>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div>
-                <h4 className="font-semibold mb-3">Response Format</h4>
-                <p className="text-sm text-muted-foreground mb-3">
-                  All API responses follow a consistent JSON structure:
-                </p>
-                <div className="bg-muted rounded-lg p-4 relative">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="absolute top-2 right-2 h-6 w-6 p-0"
-                    onClick={() =>
-                      copyToClipboard(
-                        '{\n  "data": {...},\n  "meta": {\n    "total": 42,\n    "page": 1,\n    "per_page": 20\n  }\n}',
-                        "response-format"
-                      )
-                    }
-                  >
-                    {copiedCode === "response-format" ? (
-                      "✓"
-                    ) : (
-                      <Copy className="h-3 w-3" />
-                    )}
-                  </Button>
-                  <code className="text-sm">
-                    {`{
-  "data": {...},
-  "meta": {
-    "total": 42,
-    "page": 1,
-    "per_page": 20
-  }
-}`}
-                  </code>
-                </div>
-              </div>
+            <CardContent>
+              <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">https://api.reflectsaas.com/v1</div>
             </CardContent>
           </Card>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Rate Limits</CardTitle>
+                <CardDescription>API usage limits per plan</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="font-medium">Free Plan</span>
+                  <span className="text-muted-foreground">100 requests/hour</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Pro Plan</span>
+                  <span className="text-muted-foreground">1,000 requests/hour</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Enterprise</span>
+                  <span className="text-muted-foreground">10,000 requests/hour</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Response Format</CardTitle>
+                <CardDescription>All responses are in JSON format</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+                  <div>{"{"}</div>
+                  <div className="ml-4">"success": true,</div>
+                  <div className="ml-4">"data": {},</div>
+                  <div className="ml-4">"message": "string"</div>
+                  <div>{"}"}</div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="authentication" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Key className="h-5 w-5" />
-                Authentication
+              <CardTitle className="flex items-center">
+                <Key className="mr-2 h-5 w-5" />
+                API Key Authentication
               </CardTitle>
-              <CardDescription>
-                Secure your API requests with proper authentication
-              </CardDescription>
+              <CardDescription>Use your API key in the Authorization header for all requests</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <div>
-                <h4 className="font-semibold mb-3">API Key Authentication</h4>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Include your API key in the Authorization header of every
-                  request:
-                </p>
-                <div className="bg-muted rounded-lg p-4 relative">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="absolute top-2 right-2 h-6 w-6 p-0"
-                    onClick={() =>
-                      copyToClipboard(
-                        "Authorization: Bearer YOUR_API_KEY",
-                        "auth-header"
-                      )
-                    }
-                  >
-                    {copiedCode === "auth-header" ? (
-                      "✓"
-                    ) : (
-                      <Copy className="h-3 w-3" />
-                    )}
-                  </Button>
-                  <code className="text-sm">
-                    Authorization: Bearer YOUR_API_KEY
-                  </code>
-                </div>
+                <h4 className="font-medium mb-2">Header Format</h4>
+                <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">Authorization: Bearer YOUR_API_KEY</div>
               </div>
 
               <div>
-                <h4 className="font-semibold mb-3">API Key Management</h4>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="p-4 border rounded-lg">
-                    <h5 className="font-medium mb-2">Generate Keys</h5>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Create multiple API keys for different applications
-                    </p>
-                    <Button size="sm" variant="outline">
-                      Manage Keys
-                    </Button>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h5 className="font-medium mb-2">Key Rotation</h5>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Regularly rotate keys for enhanced security
-                    </p>
-                    <Button size="sm" variant="outline">
-                      Rotate Keys
-                    </Button>
-                  </div>
+                <h4 className="font-medium mb-2">Example Request</h4>
+                <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+                  <div>curl -H "Authorization: Bearer sk-..." https://api.reflectsaas.com/v1/notes</div>
                 </div>
               </div>
 
-              <div>
-                <h4 className="font-semibold mb-3">Rate Limiting</h4>
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <ul className="text-sm space-y-1">
-                    <li>
-                      • <strong>1,000 requests per hour</strong> per API key
-                    </li>
-                    <li>
-                      • <strong>10 requests per second</strong> burst limit
-                    </li>
-                    <li>• Rate limit headers included in all responses</li>
-                    <li>• 429 status code when limits are exceeded</li>
-                  </ul>
-                </div>
-              </div>
+              <Alert>
+                <Lock className="h-4 w-4" />
+                <AlertDescription>
+                  Keep your API key secure. Never expose it in client-side code or public repositories.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Getting Your API Key</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ol className="list-decimal list-inside space-y-2 text-sm">
+                <li>Navigate to Settings → API Keys</li>
+                <li>Click "Generate New API Key"</li>
+                <li>Give your key a descriptive name</li>
+                <li>Copy and store the key securely</li>
+                <li>Use the key in your API requests</li>
+              </ol>
+              <Button>
+                <Key className="mr-2 h-4 w-4" />
+                Manage API Keys
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="endpoints" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>API Endpoints</CardTitle>
-              <CardDescription>
-                Complete reference for all available endpoints
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {endpoints.map((endpoint, index) => (
-                  <div key={index} className="border rounded-lg p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <Badge className={getMethodColor(endpoint.method)}>
-                          {endpoint.method}
-                        </Badge>
-                        <code className="text-lg font-mono">
-                          {endpoint.path}
-                        </code>
-                      </div>
-                      <Badge variant="outline">{endpoint.auth}</Badge>
+          <div className="space-y-4">
+            {endpoints.map((endpoint, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Badge className={getMethodColor(endpoint.method)}>{endpoint.method}</Badge>
+                      <code className="text-sm font-mono">{endpoint.path}</code>
                     </div>
-
-                    <p className="text-muted-foreground mb-4">
-                      {endpoint.description}
-                    </p>
-
-                    {endpoint.params.length > 0 && (
-                      <div className="mb-4">
-                        <h5 className="font-medium mb-2">Parameters:</h5>
-                        <div className="flex flex-wrap gap-2">
-                          {endpoint.params.map((param, paramIndex) => (
-                            <code
-                              key={paramIndex}
-                              className="text-xs bg-muted px-2 py-1 rounded"
-                            >
-                              {param}
-                            </code>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div>
-                      <h5 className="font-medium mb-2">Example Response:</h5>
-                      <div className="bg-muted rounded-lg p-4 relative">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="absolute top-2 right-2 h-6 w-6 p-0"
-                          onClick={() =>
-                            copyToClipboard(
-                              JSON.stringify(endpoint.response, null, 2),
-                              `response-${index}`
-                            )
-                          }
-                        >
-                          {copiedCode === `response-${index}` ? (
-                            "✓"
-                          ) : (
-                            <Copy className="h-3 w-3" />
-                          )}
-                        </Button>
-                        <code className="text-sm">
-                          <pre>
-                            {JSON.stringify(endpoint.response, null, 2)}
-                          </pre>
-                        </code>
-                      </div>
-                    </div>
+                    <Badge variant="outline">{endpoint.auth}</Badge>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  <CardDescription>{endpoint.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {endpoint.params.length > 0 && (
+                    <div>
+                      <h4 className="font-medium mb-2">Parameters</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {endpoint.params.map((param, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs">
+                            {param}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </TabsContent>
 
         <TabsContent value="examples" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Code Examples</CardTitle>
-              <CardDescription>
-                Ready-to-use code examples in multiple languages
-              </CardDescription>
+              <CardTitle>Create a Note</CardTitle>
+              <CardDescription>POST /api/v1/notes</CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="javascript" className="space-y-4">
-                <TabsList>
-                  <TabsTrigger value="javascript">JavaScript</TabsTrigger>
-                  <TabsTrigger value="python">Python</TabsTrigger>
-                  <TabsTrigger value="curl">cURL</TabsTrigger>
-                </TabsList>
+              <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                <div className="text-green-600">// Request</div>
+                <div>curl -X POST https://api.reflectsaas.com/v1/notes \</div>
+                <div className="ml-2">-H "Authorization: Bearer YOUR_API_KEY" \</div>
+                <div className="ml-2">-H "Content-Type: application/json" \</div>
+                <div className="ml-2">{`-d '{"title": "My New Note", "content": "This is the note content", "tags": ["productivity", "ideas"]}'`}</div>
 
-                {Object.entries(codeExamples).map(([lang, code]) => (
-                  <TabsContent key={lang} value={lang}>
-                    <div className="bg-muted rounded-lg p-4 relative">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="absolute top-2 right-2 h-6 w-6 p-0"
-                        onClick={() => copyToClipboard(code, `example-${lang}`)}
-                      >
-                        {copiedCode === `example-${lang}` ? (
-                          "✓"
-                        ) : (
-                          <Copy className="h-3 w-3" />
-                        )}
-                      </Button>
-                      <code className="text-sm">
-                        <pre>{code}</pre>
-                      </code>
-                    </div>
-                  </TabsContent>
-                ))}
-              </Tabs>
+                <div className="mt-4 text-green-600">// Response</div>
+                <div>{"{"}</div>
+                <div className="ml-2">"success": true,</div>
+                <div className="ml-2">"data": {"{"}</div>
+                <div className="ml-4">"id": "note_123",</div>
+                <div className="ml-4">"title": "My New Note",</div>
+                <div className="ml-4">"created_at": "2024-01-15T10:30:00Z"</div>
+                <div className="ml-2">{"}"},</div>
+                <div className="ml-2">"message": "Note created successfully"</div>
+                <div>{"}"}</div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Search Notes</CardTitle>
+              <CardDescription>POST /api/v1/search</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                <div className="text-green-600">// Request</div>
+                <div>curl -X POST https://api.reflectsaas.com/v1/search \</div>
+                <div className="ml-2">-H "Authorization: Bearer YOUR_API_KEY" \</div>
+                <div className="ml-2">-H "Content-Type: application/json" \</div>
+                <div className="ml-2">{`-d '{"query": "productivity tips", "limit": 10, "semantic": true}'`}</div>
+
+                <div className="mt-4 text-green-600">// Response</div>
+                <div>{"{"}</div>
+                <div className="ml-2">"success": true,</div>
+                <div className="ml-2">"data": {"{"}</div>
+                <div className="ml-4">"results": [...],</div>
+                <div className="ml-4">"total": 25</div>
+                <div className="ml-2">{"}"},</div>
+                <div className="ml-2">"message": "Search completed"</div>
+                <div>{"}"}</div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -602,209 +297,83 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
         <TabsContent value="webhooks" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Webhook className="h-5 w-5" />
+              <CardTitle className="flex items-center">
+                <Zap className="mr-2 h-5 w-5" />
                 Webhook Events
               </CardTitle>
-              <CardDescription>
-                Subscribe to real-time events from your Reflect account
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {webhookEvents.map((webhook, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <code className="text-sm font-mono bg-muted px-2 py-1 rounded">
-                        {webhook.event}
-                      </code>
-                      <Badge variant="secondary">Event</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {webhook.description}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      <strong>Payload:</strong> {webhook.payload}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Setting Up Webhooks</CardTitle>
+              <CardDescription>Receive real-time notifications when events occur in your account</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-2">
-                  1. Create Webhook Endpoint
-                </h4>
-                <div className="bg-muted rounded-lg p-4 relative">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="absolute top-2 right-2 h-6 w-6 p-0"
-                    onClick={() =>
-                      copyToClipboard(
-                        'POST /api/v1/webhooks\n{\n  "url": "https://your-app.com/webhook",\n  "events": ["note.created", "note.updated"],\n  "secret": "your-webhook-secret"\n}',
-                        "webhook-create"
-                      )
-                    }
-                  >
-                    {copiedCode === "webhook-create" ? (
-                      "✓"
-                    ) : (
-                      <Copy className="h-3 w-3" />
-                    )}
-                  </Button>
-                  <code className="text-sm">
-                    {`POST /api/v1/webhooks
-{
-  "url": "https://your-app.com/webhook",
-  "events": ["note.created", "note.updated"],
-  "secret": "your-webhook-secret"
-}`}
-                  </code>
+              <div className="grid gap-4">
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">note.created</h4>
+                    <Badge variant="secondary">High Volume</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Triggered when a new note is created</p>
                 </div>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-2">
-                  2. Verify Webhook Signature
-                </h4>
-                <div className="bg-muted rounded-lg p-4 relative">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="absolute top-2 right-2 h-6 w-6 p-0"
-                    onClick={() =>
-                      copyToClipboard(
-                        "const crypto = require('crypto');\n\nfunction verifyWebhook(payload, signature, secret) {\n  const hmac = crypto.createHmac('sha256', secret);\n  const digest = hmac.update(payload).digest('hex');\n  return signature === `sha256=${digest}`;\n}",
-                        "webhook-verify"
-                      )
-                    }
-                  >
-                    {copiedCode === "webhook-verify" ? (
-                      "✓"
-                    ) : (
-                      <Copy className="h-3 w-3" />
-                    )}
-                  </Button>
-                  <code className="text-sm">
-                    {`const crypto = require('crypto');
-
-function verifyWebhook(payload, signature, secret) {
-  const hmac = crypto.createHmac('sha256', secret);
-  const digest = hmac.update(payload).digest('hex');
-  return signature === \`sha256=\${digest}\`;
-}`}
-                  </code>
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">note.updated</h4>
+                    <Badge variant="secondary">High Volume</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Triggered when a note is modified</p>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="sdks" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Official SDKs</CardTitle>
-              <CardDescription>
-                Use our official SDKs for faster development
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    JavaScript/Node.js
-                    <Badge variant="secondary">Official</Badge>
-                  </h4>
-                  <div className="bg-muted rounded-lg p-3 mb-3">
-                    <code className="text-sm">npm install @reflect/api</code>
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">note.deleted</h4>
+                    <Badge variant="outline">Medium Volume</Badge>
                   </div>
-                  <div className="bg-muted rounded-lg p-3 mb-3">
-                    <code className="text-sm">
-                      {`import { ReflectAPI } from '@reflect/api';
-
-const reflect = new ReflectAPI('YOUR_API_KEY');
-const notes = await reflect.notes.list();`}
-                    </code>
-                  </div>
-                  <Button size="sm" variant="outline" className="w-full">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Documentation
-                  </Button>
+                  <p className="text-sm text-muted-foreground">Triggered when a note is permanently deleted</p>
                 </div>
-
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    Python
-                    <Badge variant="secondary">Official</Badge>
-                  </h4>
-                  <div className="bg-muted rounded-lg p-3 mb-3">
-                    <code className="text-sm">pip install reflect-api</code>
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">connection.created</h4>
+                    <Badge variant="outline">Medium Volume</Badge>
                   </div>
-                  <div className="bg-muted rounded-lg p-3 mb-3">
-                    <code className="text-sm">
-                      {`from reflect import ReflectAPI
-
-reflect = ReflectAPI('YOUR_API_KEY')
-notes = reflect.notes.list()`}
-                    </code>
-                  </div>
-                  <Button size="sm" variant="outline" className="w-full">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Documentation
-                  </Button>
+                  <p className="text-sm text-muted-foreground">Triggered when notes are connected</p>
                 </div>
-
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    Go
-                    <Badge variant="secondary">Official</Badge>
-                  </h4>
-                  <div className="bg-muted rounded-lg p-3 mb-3">
-                    <code className="text-sm">
-                      go get github.com/reflect/go-sdk
-                    </code>
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">connection.removed</h4>
+                    <Badge variant="outline">Low Volume</Badge>
                   </div>
-                  <div className="bg-muted rounded-lg p-3 mb-3">
-                    <code className="text-sm">
-                      {`import "github.com/reflect/go-sdk"
-
-client := reflect.NewClient("YOUR_API_KEY")
-notes, err := client.Notes.List()`}
-                    </code>
-                  </div>
-                  <Button size="sm" variant="outline" className="w-full">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Documentation
-                  </Button>
+                  <p className="text-sm text-muted-foreground">Triggered when note connections are removed</p>
                 </div>
-
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    Ruby
-                    <Badge variant="secondary">Official</Badge>
-                  </h4>
-                  <div className="bg-muted rounded-lg p-3 mb-3">
-                    <code className="text-sm">gem install reflect-api</code>
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">search.performed</h4>
+                    <Badge variant="secondary">High Volume</Badge>
                   </div>
-                  <div className="bg-muted rounded-lg p-3 mb-3">
-                    <code className="text-sm">
-                      {`require 'reflect'
-
-client = Reflect::Client.new('YOUR_API_KEY')
-notes = client.notes.list`}
-                    </code>
+                  <p className="text-sm text-muted-foreground">Triggered when AI-powered searches are executed</p>
+                </div>
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">ai.suggestion</h4>
+                    <Badge variant="outline">Medium Volume</Badge>
                   </div>
-                  <Button size="sm" variant="outline" className="w-full">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Documentation
-                  </Button>
+                  <p className="text-sm text-muted-foreground">Triggered when AI generates suggestions or insights</p>
+                </div>
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">user.login</h4>
+                    <Badge variant="outline">Low Volume</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Triggered when a user logs into their account</p>
+                </div>
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">integration.connected</h4>
+                    <Badge variant="outline">Low Volume</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Triggered when a third-party integration is connected</p>
+                </div>
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">backup.completed</h4>
+                    <Badge variant="outline">Low Volume</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Triggered when automated backups are completed</p>
                 </div>
               </div>
             </CardContent>
@@ -812,55 +381,294 @@ notes = client.notes.list`}
 
           <Card>
             <CardHeader>
-              <CardTitle>Community SDKs</CardTitle>
-              <CardDescription>
-                Third-party SDKs maintained by the community
-              </CardDescription>
+              <CardTitle className="flex items-center">
+                <Shield className="mr-2 h-5 w-5" />
+                Webhook Security
+              </CardTitle>
+              <CardDescription>Secure webhook implementation with signature verification</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-3 gap-4">
-                {["PHP", "C#", "Swift", "Rust", "Java", "Kotlin"].map(
-                  (lang) => (
-                    <div
-                      key={lang}
-                      className="text-center p-4 border rounded-lg"
-                    >
-                      <h4 className="font-semibold mb-2">{lang}</h4>
-                      <Badge variant="outline" className="mb-2">
-                        Community
-                      </Badge>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Community maintained SDK
-                      </p>
-                      <Button size="sm" variant="outline" className="w-full">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        View on GitHub
-                      </Button>
+            <CardContent className="space-y-6">
+              <Alert>
+                <Lock className="h-4 w-4" />
+                <AlertDescription>
+                  All webhooks are signed with HMAC-SHA256. Always verify signatures to ensure authenticity.
+                </AlertDescription>
+              </Alert>
+
+              <div>
+                <h4 className="font-medium mb-3">Signature Verification</h4>
+                <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm space-y-2">
+                  <div className="text-green-600">// Node.js signature verification</div>
+                  <div>const crypto = require('crypto');</div>
+                  <div>const signature = req.headers['x-reflect-signature'];</div>
+                  <div>const payload = JSON.stringify(req.body);</div>
+                  <div>const secret = process.env.WEBHOOK_SECRET;</div>
+                  <div></div>
+                  <div>const expectedSignature = crypto</div>
+                  <div className="ml-2">.createHmac('sha256', secret)</div>
+                  <div className="ml-2">.update(payload, 'utf8')</div>
+                  <div className="ml-2">.digest('hex');</div>
+                  <div></div>
+                  <div>const isValid = crypto.timingSafeEqual(</div>
+                  <div className="ml-2">Buffer.from(signature, 'hex'),</div>
+                  <div className="ml-2">Buffer.from(expectedSignature, 'hex')</div>
+                  <div>);</div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-3">Python Signature Verification</h4>
+                <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm space-y-2">
+                  <div className="text-green-600"># Python signature verification</div>
+                  <div>import hmac</div>
+                  <div>import hashlib</div>
+                  <div>import json</div>
+                  <div></div>
+                  <div>def verify_webhook_signature(payload, signature, secret):</div>
+                  <div className="ml-4">expected_signature = hmac.new(</div>
+                  <div className="ml-8">secret.encode('utf-8'),</div>
+                  <div className="ml-8">payload.encode('utf-8'),</div>
+                  <div className="ml-8">hashlib.sha256</div>
+                  <div className="ml-4">).hexdigest()</div>
+                  <div className="ml-4"></div>
+                  <div className="ml-4">return hmac.compare_digest(signature, expected_signature)</div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-medium mb-2">Security Headers</h4>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <code className="bg-gray-100 px-2 py-1 rounded">X-Reflect-Signature</code> - HMAC signature
                     </div>
-                  )
-                )}
+                    <div>
+                      <code className="bg-gray-100 px-2 py-1 rounded">X-Reflect-Timestamp</code> - Unix timestamp
+                    </div>
+                    <div>
+                      <code className="bg-gray-100 px-2 py-1 rounded">X-Reflect-Event</code> - Event type
+                    </div>
+                  </div>
+                </div>
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-medium mb-2">Best Practices</h4>
+                  <ul className="space-y-1 text-sm">
+                    <li>• Verify timestamp to prevent replay attacks</li>
+                    <li>• Use HTTPS endpoints only</li>
+                    <li>• Implement idempotency keys</li>
+                    <li>• Return 200 status for successful processing</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Webhook Configuration</CardTitle>
+              <CardDescription>Set up and manage your webhook endpoints</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+                <div className="text-green-600">// Webhook payload example</div>
+                <div>{"{"}</div>
+                <div className="ml-2">"id": "evt_1234567890",</div>
+                <div className="ml-2">"event": "note.created",</div>
+                <div className="ml-2">"timestamp": "2024-01-15T10:30:00Z",</div>
+                <div className="ml-2">"api_version": "v1",</div>
+                <div className="ml-2">"data": {"{"}</div>
+                <div className="ml-4">"note_id": "note_123",</div>
+                <div className="ml-4">"title": "New Note",</div>
+                <div className="ml-4">"user_id": "user_456",</div>
+                <div className="ml-4">"created_at": "2024-01-15T10:30:00Z",</div>
+                <div className="ml-4">"tags": ["productivity", "ideas"]</div>
+                <div className="ml-2">{"}"},</div>
+                <div className="ml-2">"previous_attributes": null</div>
+                <div>{"}"}</div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <Button>
+                  <Zap className="mr-2 h-4 w-4" />
+                  Configure Webhooks
+                </Button>
+                <Button variant="outline">
+                  <Terminal className="mr-2 h-4 w-4" />
+                  Test Webhook
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Delivery & Retry Policy</CardTitle>
+              <CardDescription>Understanding webhook delivery guarantees and retry behavior</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-medium mb-2">Delivery Guarantees</h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
+                    <li>• At-least-once delivery</li>
+                    <li>• 30-second timeout per request</li>
+                    <li>• Automatic retries on failure</li>
+                    <li>• Dead letter queue for failed events</li>
+                  </ul>
+                </div>
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-medium mb-2">Retry Schedule</h4>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
+                    <li>• Immediate retry</li>
+                    <li>• 5 minutes later</li>
+                    <li>• 30 minutes later</li>
+                    <li>• 2 hours later</li>
+                    <li>• 12 hours later</li>
+                  </ul>
+                </div>
+              </div>
+
+              <Alert>
+                <AlertDescription>
+                  Webhooks that fail after all retry attempts are stored for 7 days and can be manually replayed from
+                  the dashboard.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Webhook Filtering</CardTitle>
+              <CardDescription>Configure which events to receive and apply filters</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+                <div className="text-green-600">// Webhook configuration example</div>
+                <div>{"{"}</div>
+                <div className="ml-2">"url": "https://your-app.com/webhooks/reflect",</div>
+                <div className="ml-2">"events": ["note.created", "note.updated"],</div>
+                <div className="ml-2">"filters": {"{"}</div>
+                <div className="ml-4">"user_id": ["user_123", "user_456"],</div>
+                <div className="ml-4">"tags": ["important", "project-alpha"]</div>
+                <div className="ml-2">{"}"},</div>
+                <div className="ml-2">"active": true,</div>
+                <div className="ml-2">"secret": "whsec_..."</div>
+                <div>{"}"}</div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="border rounded-lg p-3">
+                  <h5 className="font-medium text-sm mb-1">Event Filtering</h5>
+                  <p className="text-xs text-muted-foreground">Choose specific events to receive</p>
+                </div>
+                <div className="border rounded-lg p-3">
+                  <h5 className="font-medium text-sm mb-1">User Filtering</h5>
+                  <p className="text-xs text-muted-foreground">Filter by specific user IDs</p>
+                </div>
+                <div className="border rounded-lg p-3">
+                  <h5 className="font-medium text-sm mb-1">Tag Filtering</h5>
+                  <p className="text-xs text-muted-foreground">Filter by note tags or categories</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Troubleshooting Webhooks</CardTitle>
+              <CardDescription>Common issues and debugging tips</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="border-l-4 border-yellow-500 pl-4">
+                  <h5 className="font-medium text-sm">Webhook Not Receiving Events</h5>
+                  <p className="text-sm text-muted-foreground">
+                    Check endpoint URL, ensure HTTPS, verify firewall settings
+                  </p>
+                </div>
+                <div className="border-l-4 border-red-500 pl-4">
+                  <h5 className="font-medium text-sm">Signature Verification Failing</h5>
+                  <p className="text-sm text-muted-foreground">
+                    Ensure you're using the correct webhook secret and HMAC-SHA256
+                  </p>
+                </div>
+                <div className="border-l-4 border-blue-500 pl-4">
+                  <h5 className="font-medium text-sm">High Latency or Timeouts</h5>
+                  <p className="text-sm text-muted-foreground">
+                    Optimize endpoint response time, consider async processing
+                  </p>
+                </div>
+                <div className="border-l-4 border-green-500 pl-4">
+                  <h5 className="font-medium text-sm">Duplicate Events</h5>
+                  <p className="text-sm text-muted-foreground">
+                    Implement idempotency using the event ID to handle duplicates
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex space-x-4">
+                <Button variant="outline" size="sm">
+                  <Terminal className="mr-2 h-4 w-4" />
+                  View Webhook Logs
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Zap className="mr-2 h-4 w-4" />
+                  Test Endpoint
+                </Button>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
 
-      {/* Support Section */}
-      <div className="mt-12 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border">
-        <h3 className="font-semibold text-lg mb-2">Need Help with the API?</h3>
-        <p className="text-muted-foreground mb-4">
-          Join our developer community, check out our guides, or contact our
-          support team for assistance.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Join Discord Community
-          </Button>
-          <Button variant="outline">View API Status</Button>
-          <Button variant="outline">Contact Support</Button>
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>SDKs and Libraries</CardTitle>
+          <CardDescription>
+            Official and community-maintained libraries for popular programming languages
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="border rounded-lg p-4">
+              <h4 className="font-medium mb-2">JavaScript/Node.js</h4>
+              <div className="bg-gray-100 p-2 rounded font-mono text-sm mb-2">npm install @reflectsaas/sdk</div>
+              <Button variant="outline" size="sm">
+                <Book className="mr-2 h-4 w-4" />
+                View Docs
+              </Button>
+            </div>
+            <div className="border rounded-lg p-4">
+              <h4 className="font-medium mb-2">Python</h4>
+              <div className="bg-gray-100 p-2 rounded font-mono text-sm mb-2">pip install reflectsaas</div>
+              <Button variant="outline" size="sm">
+                <Book className="mr-2 h-4 w-4" />
+                View Docs
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Need Help?</CardTitle>
+          <CardDescription>Get support with API integration and development</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex space-x-4">
+            <Button variant="outline">
+              <Terminal className="mr-2 h-4 w-4" />
+              API Playground
+            </Button>
+            <Button variant="outline">
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Developer Forum
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
 }

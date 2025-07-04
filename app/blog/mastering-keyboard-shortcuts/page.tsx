@@ -1,5 +1,3 @@
- "Client"
-
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -11,10 +9,10 @@ export default function KeyboardShortcutsPage() {
     title: "Mastering Keyboard Shortcuts: 10x Your Reflect Productivity",
     excerpt:
       "Learn the essential keyboard shortcuts and power-user techniques that will transform how you work with Reflect.",
-    coverImage: "/img/7.svg?height=600&width=1200",
+    coverImage: "/placeholder.svg?height=600&width=1200",
     category: "Productivity",
     publishDate: "April 1, 2025",
-    readTime: 8, 
+    readTime: 8,
     author: {
       name: "Alex Chen",
       avatar: "/placeholder.svg?height=100&width=100",

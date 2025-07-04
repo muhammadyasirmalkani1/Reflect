@@ -1,5 +1,3 @@
-"Client";
-
 import type React from "react"
 import type { Metadata } from "next"
 import DocsNav from "@/components/docs-nav"

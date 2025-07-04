@@ -1,415 +1,244 @@
-"Client"
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { Plug, Zap, Calendar, Mail, FileText, Database, Cloud, Settings } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Code } from "lucide-react"
+import { ExternalLink, Zap, Cloud, FileText, Calendar, MessageSquare, GitBranch } from "lucide-react"
 
 export default function IntegrationsPage() {
-  const integrationCategories = [
+  const integrations = [
     {
-      title: "Productivity & Task Management",
-      icon: Zap,
-      integrations: [
-        {
-          name: "Notion",
-          description: "Sync notes and databases between Reflect and Notion",
-          status: "Available",
-          features: ["Two-way sync", "Database integration", "Page embedding"],
-          setup: "Connect via API key in Settings > Integrations",
-        },
-        {
-          name: "Todoist",
-          description: "Create tasks from notes and sync project information",
-          status: "Available",
-          features: ["Task creation", "Project sync", "Due date mapping"],
-          setup: "Authenticate with Todoist account",
-        },
-        {
-          name: "Trello",
-          description: "Convert notes to cards and sync board information",
-          status: "Available",
-          features: ["Card creation", "Board sync", "Checklist integration"],
-          setup: "Connect via Trello Power-Up",
-        },
-        {
-          name: "Asana",
-          description: "Sync tasks and project notes with Asana",
-          status: "Beta",
-          features: ["Task sync", "Project integration", "Team collaboration"],
-          setup: "Beta access required",
-        },
-      ],
+      name: "Notion",
+      description: "Sync your notes and databases with Notion workspaces",
+      category: "Productivity",
+      status: "Available",
+      icon: <FileText className="h-6 w-6" />,
+      features: ["Two-way sync", "Database import", "Page templates"],
+      setup: "Connect via OAuth and select workspaces to sync",
     },
     {
-      title: "Calendar & Scheduling",
-      icon: Calendar,
-      integrations: [
-        {
-          name: "Google Calendar",
-          description: "Sync events and create meeting notes automatically",
-          status: "Available",
-          features: ["Event sync", "Auto meeting notes", "Calendar embedding"],
-          setup: "OAuth authentication with Google",
-        },
-        {
-          name: "Outlook Calendar",
-          description: "Microsoft Calendar integration for seamless scheduling",
-          status: "Available",
-          features: ["Event sync", "Meeting integration", "Teams compatibility"],
-          setup: "Microsoft account authentication",
-        },
-        {
-          name: "Calendly",
-          description: "Auto-generate notes for scheduled meetings",
-          status: "Available",
-          features: ["Meeting prep notes", "Attendee information", "Follow-up templates"],
-          setup: "Calendly webhook configuration",
-        },
-      ],
+      name: "Obsidian",
+      description: "Import your Obsidian vault and maintain graph connections",
+      category: "Note-taking",
+      status: "Available",
+      icon: <GitBranch className="h-6 w-6" />,
+      features: ["Vault import", "Link preservation", "Plugin compatibility"],
+      setup: "Upload vault folder or connect via file system",
     },
     {
-      title: "Communication",
-      icon: Mail,
-      integrations: [
-        {
-          name: "Slack",
-          description: "Share notes and get notifications in Slack channels",
-          status: "Available",
-          features: ["Note sharing", "Channel notifications", "Search integration"],
-          setup: "Install Reflect Slack app",
-        },
-        {
-          name: "Discord",
-          description: "Share research and collaborate with Discord communities",
-          status: "Available",
-          features: ["Note sharing", "Bot commands", "Server integration"],
-          setup: "Add Reflect bot to server",
-        },
-        {
-          name: "Microsoft Teams",
-          description: "Collaborate on notes within Teams channels",
-          status: "Available",
-          features: ["Channel integration", "File sharing", "Meeting notes"],
-          setup: "Install Teams app from marketplace",
-        },
-        {
-          name: "Gmail",
-          description: "Save emails as notes and create email templates",
-          status: "Beta",
-          features: ["Email to note", "Template integration", "Contact sync"],
-          setup: "Gmail API authentication",
-        },
-      ],
+      name: "Google Drive",
+      description: "Access and sync documents from Google Drive",
+      category: "Cloud Storage",
+      status: "Available",
+      icon: <Cloud className="h-6 w-6" />,
+      features: ["Document sync", "Real-time collaboration", "Version history"],
+      setup: "Authenticate with Google and select folders",
     },
     {
-      title: "Development & Documentation",
-      icon: FileText,
-      integrations: [
-        {
-          name: "GitHub",
-          description: "Link notes to repositories and sync documentation",
-          status: "Available",
-          features: ["Repo linking", "Issue integration", "Documentation sync"],
-          setup: "GitHub OAuth authentication",
-        },
-        {
-          name: "GitLab",
-          description: "Integrate with GitLab projects and wikis",
-          status: "Available",
-          features: ["Project integration", "Wiki sync", "Issue tracking"],
-          setup: "GitLab personal access token",
-        },
-        {
-          name: "Confluence",
-          description: "Sync documentation between Reflect and Confluence",
-          status: "Available",
-          features: ["Page sync", "Space integration", "Version control"],
-          setup: "Atlassian account connection",
-        },
-        {
-          name: "Linear",
-          description: "Connect notes to Linear issues and projects",
-          status: "Beta",
-          features: ["Issue linking", "Project sync", "Status updates"],
-          setup: "Linear API key required",
-        },
-      ],
+      name: "Slack",
+      description: "Share insights and collaborate with team members",
+      category: "Communication",
+      status: "Beta",
+      icon: <MessageSquare className="h-6 w-6" />,
+      features: ["Message sharing", "Channel integration", "Bot commands"],
+      setup: "Install Slack app and configure channels",
     },
     {
-      title: "Cloud Storage",
-      icon: Cloud,
-      integrations: [
-        {
-          name: "Google Drive",
-          description: "Sync files and embed documents in notes",
-          status: "Available",
-          features: ["File sync", "Document embedding", "Folder integration"],
-          setup: "Google Drive API authentication",
-        },
-        {
-          name: "Dropbox",
-          description: "Access and embed Dropbox files in your notes",
-          status: "Available",
-          features: ["File access", "Link sharing", "Folder sync"],
-          setup: "Dropbox app authorization",
-        },
-        {
-          name: "OneDrive",
-          description: "Microsoft OneDrive integration for file management",
-          status: "Available",
-          features: ["File sync", "Office integration", "SharePoint compatibility"],
-          setup: "Microsoft account authentication",
-        },
-        {
-          name: "iCloud",
-          description: "Sync with iCloud Drive for Apple ecosystem integration",
-          status: "Coming Soon",
-          features: ["File sync", "iOS integration", "macOS compatibility"],
-          setup: "Apple ID authentication",
-        },
-      ],
+      name: "Zapier",
+      description: "Automate workflows with 5000+ apps",
+      category: "Automation",
+      status: "Available",
+      icon: <Zap className="h-6 w-6" />,
+      features: ["Trigger automation", "Data transformation", "Multi-step workflows"],
+      setup: "Create Zapier account and configure triggers",
     },
     {
-      title: "Research & Knowledge",
-      icon: Database,
-      integrations: [
-        {
-          name: "Zotero",
-          description: "Import research papers and citations",
-          status: "Available",
-          features: ["Citation import", "PDF annotation", "Bibliography generation"],
-          setup: "Zotero API key configuration",
-        },
-        {
-          name: "Mendeley",
-          description: "Academic reference management integration",
-          status: "Available",
-          features: ["Reference import", "PDF sync", "Collaboration"],
-          setup: "Mendeley account connection",
-        },
-        {
-          name: "Readwise",
-          description: "Import highlights from books and articles",
-          status: "Available",
-          features: ["Highlight import", "Book sync", "Review system"],
-          setup: "Readwise API token",
-        },
-        {
-          name: "Pocket",
-          description: "Save and organize articles for later reading",
-          status: "Beta",
-          features: ["Article import", "Tag sync", "Reading list"],
-          setup: "Pocket account authentication",
-        },
-      ],
+      name: "Calendar Apps",
+      description: "Sync with Google Calendar, Outlook, and Apple Calendar",
+      category: "Productivity",
+      status: "Available",
+      icon: <Calendar className="h-6 w-6" />,
+      features: ["Event sync", "Meeting notes", "Schedule integration"],
+      setup: "Connect calendar accounts via OAuth",
     },
   ]
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Available":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+        return "bg-green-100 text-green-800"
       case "Beta":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+        return "bg-yellow-100 text-yellow-800"
       case "Coming Soon":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-gray-100 text-gray-800"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-gray-100 text-gray-800"
     }
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <Plug className="h-8 w-8 text-green-600" />
-          <h1 className="text-3xl font-bold">Integrations</h1>
-        </div>
-        <p className="text-lg text-muted-foreground">
-          Connect Reflect with your favorite tools and services to create a seamless workflow.
+    <div className="max-w-4xl mx-auto p-6 space-y-8">
+      <div className="space-y-4">
+        <h1 className="text-4xl font-bold">Integrations</h1>
+        <p className="text-xl text-muted-foreground">
+          Connect ReflectSaaS with your favorite tools and services to create a seamless workflow.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">50+ Integrations</CardTitle>
-            <CardDescription>Connect with popular productivity, development, and research tools</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Two-way Sync</CardTitle>
-            <CardDescription>Keep your data synchronized across all your connected applications</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Custom Webhooks</CardTitle>
-            <CardDescription>Build custom integrations with our webhook API and automation tools</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
+      <Alert>
+        <Zap className="h-4 w-4" />
+        <AlertDescription>
+          New integrations are added regularly. Request specific integrations through our{" "}
+          <a href="/support" className="text-blue-600 hover:underline">
+            support channel
+          </a>
+          .
+        </AlertDescription>
+      </Alert>
 
-      <div className="space-y-8">
-        {integrationCategories.map((category, categoryIndex) => (
-          <div key={categoryIndex}>
-            <div className="flex items-center gap-2 mb-4">
-              <category.icon className="h-6 w-6 text-green-600" />
-              <h2 className="text-2xl font-bold">{category.title}</h2>
-            </div>
+      <Tabs defaultValue="all" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="productivity">Productivity</TabsTrigger>
+          <TabsTrigger value="note-taking">Note-taking</TabsTrigger>
+          <TabsTrigger value="cloud">Cloud Storage</TabsTrigger>
+          <TabsTrigger value="automation">Automation</TabsTrigger>
+        </TabsList>
 
-            <div className="grid lg:grid-cols-2 gap-4">
-              {category.integrations.map((integration, integrationIndex) => (
-                <Card key={integrationIndex}>
+        <TabsContent value="all" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            {integrations.map((integration, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">{integration.icon}</div>
+                      <div>
+                        <CardTitle className="text-lg">{integration.name}</CardTitle>
+                        <Badge className={getStatusColor(integration.status)}>{integration.status}</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  <CardDescription className="text-sm">{integration.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <h4 className="font-medium mb-2">Key Features</h4>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      {integration.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-center">
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium mb-2">Setup</h4>
+                    <p className="text-sm text-muted-foreground">{integration.setup}</p>
+                  </div>
+                  <Button className="w-full" variant={integration.status === "Available" ? "default" : "secondary"}>
+                    {integration.status === "Available" ? "Configure" : "Learn More"}
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="productivity" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            {integrations
+              .filter((i) => i.category === "Productivity")
+              .map((integration, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg flex items-center gap-2">
-                          {integration.name}
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-blue-100 rounded-lg">{integration.icon}</div>
+                        <div>
+                          <CardTitle className="text-lg">{integration.name}</CardTitle>
                           <Badge className={getStatusColor(integration.status)}>{integration.status}</Badge>
-                        </CardTitle>
-                        <CardDescription className="mt-1">{integration.description}</CardDescription>
+                        </div>
                       </div>
-                      <Button
-                        size="sm"
-                        disabled={integration.status === "Coming Soon"}
-                        variant={integration.status === "Available" ? "default" : "outline"}
-                      >
-                        {integration.status === "Available"
-                          ? "Connect"
-                          : integration.status === "Beta"
-                            ? "Join Beta"
-                            : "Coming Soon"}
-                      </Button>
                     </div>
+                    <CardDescription className="text-sm">{integration.description}</CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div>
-                        <h4 className="text-sm font-medium mb-2">Features</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
-                          {integration.features.map((feature, featureIndex) => (
-                            <li key={featureIndex} className="flex items-center gap-2">
-                              <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium mb-1">Setup</h4>
-                        <p className="text-sm text-muted-foreground">{integration.setup}</p>
-                      </div>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <h4 className="font-medium mb-2">Key Features</h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        {integration.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-center">
+                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
+                    <Button className="w-full">
+                      Configure
+                      <ExternalLink className="ml-2 h-4 w-4" />
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
-            </div>
           </div>
-        ))}
-      </div>
+        </TabsContent>
+      </Tabs>
 
-      <div className="mt-12 space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              Custom Integrations
-            </CardTitle>
-            <CardDescription>Build your own integrations with our API and webhook system</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h4 className="font-semibold mb-2">Webhook API</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Receive real-time notifications when notes are created, updated, or deleted.
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Code className="mr-2 h-5 w-5" />
+            Custom Integrations
+          </CardTitle>
+          <CardDescription>Build your own integrations using our API and webhooks</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <h4 className="font-medium">Webhooks</h4>
+              <p className="text-sm text-muted-foreground">
+                Receive real-time notifications when notes are created, updated, or connected.
               </p>
-              <div className="bg-muted rounded-lg p-3">
-                <code className="text-xs">
-                  {`POST https://api.reflect.app/webhooks
-{
-  "url": "https://your-app.com/webhook",
-  "events": ["note.created", "note.updated"],
-  "secret": "your-webhook-secret"
-}`}
-                </code>
-              </div>
-            </div>
-
-            <Separator />
-
-            <div>
-              <h4 className="font-semibold mb-2">REST API</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Full CRUD operations for notes, tags, and connections.
-              </p>
-              <div className="bg-muted rounded-lg p-3">
-                <code className="text-xs">
-                  {`GET /api/v1/notes
-POST /api/v1/notes
-PUT /api/v1/notes/:id
-DELETE /api/v1/notes/:id`}
-                </code>
-              </div>
-            </div>
-
-            <div className="flex gap-2 pt-2">
-              <Button size="sm">View API Docs</Button>
-              <Button size="sm" variant="outline">
-                Get API Key
+              <Button variant="outline" size="sm">
+                Configure Webhooks
               </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Integration Marketplace</CardTitle>
-            <CardDescription>Discover community-built integrations and share your own</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-semibold mb-2">Popular Community Integrations</h4>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Obsidian Vault Sync</li>
-                  <li>• Roam Research Import</li>
-                  <li>• Anki Flashcard Generator</li>
-                  <li>• Spotify Playlist Notes</li>
-                  <li>• Weather Journal Integration</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Submit Your Integration</h4>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Built something cool? Share it with the community and get featured.
-                </p>
-                <Button size="sm" variant="outline">
-                  Submit Integration
-                </Button>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-medium">REST API</h4>
+              <p className="text-sm text-muted-foreground">
+                Full programmatic access to your notes, connections, and insights.
+              </p>
+              <Button variant="outline" size="sm">
+                View API Docs
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="mt-8 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-        <h3 className="font-semibold text-green-900 dark:text-green-100 mb-2">Need Help?</h3>
-        <p className="text-sm text-green-800 dark:text-green-200 mb-3">
-          Having trouble setting up an integration? Our support team is here to help you get connected.
-        </p>
-        <div className="flex gap-2">
-          <Button size="sm" className="bg-green-600 hover:bg-green-700">
-            Contact Support
-          </Button>
-          <Button size="sm" variant="outline" className="border-green-300 text-green-700 hover:bg-green-100">
-            View Setup Guides
-          </Button>
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Integration Support</CardTitle>
+          <CardDescription>Need help setting up integrations or have questions?</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex space-x-4">
+            <Button variant="outline">
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Contact Support
+            </Button>
+            <Button variant="outline">
+              <FileText className="mr-2 h-4 w-4" />
+              Integration Guides
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

@@ -2,13 +2,13 @@
 
 import Image from "next/image"
 import { formatDistanceToNow } from "date-fns"
+import ReactMarkdown from "react-markdown"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import { Copy, Check } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import FileAttachment from "@/components/chat/file-attachment"
-import ReactMarkdown from "react-markdown"
-import SyntaxHighlighter from "react-syntax-highlighter"
 
 interface Sender {
   name: string
@@ -76,12 +76,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           <div className="prose prose-invert max-w-none text-gray-300">
             <ReactMarkdown
               components={{
-                code({
-                  inline,
-                  className,
-                  children,
-                  ...props
-                }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
+                code({ node, inline, className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || "")
                   const codeId = `code-${Math.random().toString(36).substr(2, 9)}`
 
@@ -99,7 +94,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
                         </Button>
                       </div>
                       <SyntaxHighlighter
-                        style={atomDark as any}
+                        style={atomDark}
                         language={match[1]}
                         PreTag="div"
                         className="rounded-b-md !mt-0 !bg-black/50"

@@ -1,5 +1,3 @@
-"Client"
-
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -11,7 +9,7 @@ export default function ReflectVsTraditionalPage() {
     title: "Reflect vs. Traditional Note-Taking Apps: What's Different?",
     excerpt:
       "A detailed comparison of Reflect's approach to note-taking compared to traditional apps, and why it leads to better thinking and organization.",
-    coverImage: "/img/5.svg?height=600&width=1200",
+    coverImage: "/placeholder.svg?height=600&width=1200",
     category: "Note-taking",
     publishDate: "April 15, 2025",
     readTime: 7,

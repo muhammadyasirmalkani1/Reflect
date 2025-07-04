@@ -1,5 +1,3 @@
-"Client"
-
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -11,7 +9,7 @@ export default function WriterUsesReflectPage() {
     title: "How a Bestselling Author Uses Reflect to Write Books",
     excerpt:
       "An inside look at how bestselling author Jamie Garcia uses Reflect to organize research, outline chapters, and write more efficiently.",
-    coverImage: "/img/6.svg?height=600&width=1200",
+    coverImage: "/placeholder.svg?height=600&width=1200",
     category: "Case Studies",
     publishDate: "April 8, 2025",
     readTime: 9,

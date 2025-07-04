@@ -4,9 +4,11 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { Menu, X } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user, logout } = useAuth()
 
   return (
     <header className="border-b border-purple-900/20 bg-black/80 backdrop-blur-md fixed w-full z-50">
@@ -42,15 +44,36 @@ export default function Header() {
         </nav>
 
         <div className="hidden md:flex items-center space-x-4">
-          <Button variant="ghost" className="text-gray-300 hover:text-purple-400">
-            Log in
-          </Button>
-          <Button
-            asChild
-            className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white border-none"
-          >
-            <Link href="/get-started">Get Started</Link>
-          </Button>
+          {user ? (
+            <div className="flex items-center space-x-4">
+              <Link href="/dashboard" className="text-sm text-gray-300 hover:text-purple-400 transition-colors">
+                Dashboard
+              </Link>
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">
+                    {user.firstName?.[0]}
+                    {user.lastName?.[0]}
+                  </span>
+                </div>
+                <Button onClick={logout} variant="ghost" className="text-gray-300 hover:text-purple-400">
+                  Logout
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Button variant="ghost" className="text-gray-300 hover:text-purple-400">
+                <Link href="/auth/login">Log in</Link>
+              </Button>
+              <Button
+                asChild
+                className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white border-none"
+              >
+                <Link href="/auth/register">Get Started</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -99,15 +122,36 @@ export default function Header() {
               About
             </Link>
             <div className="flex flex-col space-y-2 pt-2 border-t border-purple-900/20">
-              <Button variant="ghost" className="justify-start text-gray-300 hover:text-purple-400">
-                Log in
-              </Button>
-              <Button
-                asChild
-                className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white border-none"
-              >
-                <Link href="/get-started">Get Started</Link>
-              </Button>
+              {user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="text-gray-300 hover:text-purple-400 py-2 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    className="justify-start text-gray-300 hover:text-purple-400"
+                    onClick={logout}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" className="justify-start text-gray-300 hover:text-purple-400">
+                    <Link href="/auth/login">Log in</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white border-none"
+                  >
+                    <Link href="/auth/register">Get Started</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

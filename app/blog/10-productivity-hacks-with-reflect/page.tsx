@@ -1,5 +1,3 @@
-"Client"
-
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -11,13 +9,13 @@ export default function ProductivityHacksPage() {
     title: "10 Productivity Hacks with Reflect",
     excerpt:
       "Discover powerful productivity techniques that leverage Reflect's unique features to help you work smarter, not harder.",
-    coverImage: "/img/2.svg?height=600&width=1200",
+    coverImage: "/placeholder.svg?height=600&width=1200",
     category: "Productivity",
     publishDate: "May 5, 2025",
     readTime: 6,
     author: {
       name: "Sarah Johnson",
-      avatar: "/img/1.jpg?height=100&width=100",
+      avatar: "/placeholder.svg?height=100&width=100",
     },
   }
 

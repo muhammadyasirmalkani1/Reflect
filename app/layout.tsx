@@ -6,13 +6,14 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import Script from "next/script"
+import { AuthProvider } from "@/hooks/use-auth"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Reflect - AI-Powered Productivity",
   description: "Enhance your productivity with AI-powered tools and insights",
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -23,11 +24,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <div className="min-h-screen bg-gradient-to-b from-black to-purple-950/30">
-            <Header />
-            <main>{children}</main>
-            <Footer />
-          </div>
+          <AuthProvider>
+            <div className="min-h-screen bg-gradient-to-b from-black to-purple-950/30">
+              <Header />
+              <main>{children}</main>
+              <Footer />
+            </div>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
