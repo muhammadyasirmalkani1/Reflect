@@ -143,13 +143,13 @@ export default function APIDocumentationPage() {
                 <CardDescription>All responses are in JSON format</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
-                  <div>{"{"}</div>
-                  <div className="ml-4">"success": true,</div>
-                  <div className="ml-4">"data": {},</div>
-                  <div className="ml-4">"message": "string"</div>
-                  <div>{"}"}</div>
-                </div>
+                <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                  <code>{`{
+  "success": true,
+  "data": {},
+  "message": "string"
+}`}</code>
+                </pre>
               </CardContent>
             </Card>
           </div>
@@ -248,9 +248,9 @@ export default function APIDocumentationPage() {
             <CardContent>
               <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
                 <code>{`// Request
-curl -X POST https://api.reflectsaas.com/v1/notes \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
+curl -X POST https://api.reflectsaas.com/v1/notes
+  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Content-Type: application/json"
   -d '{"title": "My New Note", "content": "This is the note content", "tags": ["productivity", "ideas"]}'
 
 // Response
@@ -275,9 +275,9 @@ curl -X POST https://api.reflectsaas.com/v1/notes \\
             <CardContent>
               <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
                 <code>{`// Request
-curl -X POST https://api.reflectsaas.com/v1/search \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
+curl -X POST https://api.reflectsaas.com/v1/search
+  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Content-Type: application/json"
   -d '{"query": "productivity tips", "limit": 10, "semantic": true}'
 
 // Response
@@ -397,42 +397,42 @@ curl -X POST https://api.reflectsaas.com/v1/search \\
 
               <div>
                 <h4 className="font-medium mb-3">Signature Verification</h4>
-                <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm space-y-2">
-                  <div className="text-green-600">// Node.js signature verification</div>
-                  <div>const crypto = require('crypto');</div>
-                  <div>const signature = req.headers['x-reflect-signature'];</div>
-                  <div>const payload = JSON.stringify(req.body);</div>
-                  <div>const secret = process.env.WEBHOOK_SECRET;</div>
-                  <div></div>
-                  <div>const expectedSignature = crypto</div>
-                  <div className="ml-2">.createHmac('sha256', secret)</div>
-                  <div className="ml-2">.update(payload, 'utf8')</div>
-                  <div className="ml-2">.digest('hex');</div>
-                  <div></div>
-                  <div>const isValid = crypto.timingSafeEqual(</div>
-                  <div className="ml-2">Buffer.from(signature, 'hex'),</div>
-                  <div className="ml-2">Buffer.from(expectedSignature, 'hex')</div>
-                  <div>);</div>
-                </div>
+                <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                  <code>{`// Node.js signature verification
+const crypto = require('crypto');
+const signature  = req.headers['x-reflect-signature'];
+const payload    = JSON.stringify(req.body);
+const secret     = process.env.WEBHOOK_SECRET;
+
+const expected = crypto
+  .createHmac('sha256', secret)
+  .update(payload, 'utf8')
+  .digest('hex');
+
+const isValid = crypto.timingSafeEqual(
+  Buffer.from(signature, 'hex'),
+  Buffer.from(expected,  'hex')
+);`}</code>
+                </pre>
               </div>
 
               <div>
                 <h4 className="font-medium mb-3">Python Signature Verification</h4>
-                <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm space-y-2">
-                  <div className="text-green-600"># Python signature verification</div>
-                  <div>import hmac</div>
-                  <div>import hashlib</div>
-                  <div>import json</div>
-                  <div></div>
-                  <div>def verify_webhook_signature(payload, signature, secret):</div>
-                  <div className="ml-4">expected_signature = hmac.new(</div>
-                  <div className="ml-8">secret.encode('utf-8'),</div>
-                  <div className="ml-8">payload.encode('utf-8'),</div>
-                  <div className="ml-8">hashlib.sha256</div>
-                  <div className="ml-4">).hexdigest()</div>
-                  <div className="ml-4"></div>
-                  <div className="ml-4">return hmac.compare_digest(signature, expected_signature)</div>
-                </div>
+                <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                  <code>{`# Python signature verification
+import hmac
+import hashlib
+import json
+
+def verify_webhook_signature(payload, signature, secret):
+    expected_signature = hmac.new(
+        secret.encode('utf-8'),
+        payload.encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+
+    return hmac.compare_digest(signature, expected_signature)`}</code>
+                </pre>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -469,23 +469,22 @@ curl -X POST https://api.reflectsaas.com/v1/search \\
               <CardDescription>Set up and manage your webhook endpoints</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
-                <div className="text-green-600">// Webhook payload example</div>
-                <div>{"{"}</div>
-                <div className="ml-2">"id": "evt_1234567890",</div>
-                <div className="ml-2">"event": "note.created",</div>
-                <div className="ml-2">"timestamp": "2024-01-15T10:30:00Z",</div>
-                <div className="ml-2">"api_version": "v1",</div>
-                <div className="ml-2">"data": {"{"}</div>
-                <div className="ml-4">"note_id": "note_123",</div>
-                <div className="ml-4">"title": "New Note",</div>
-                <div className="ml-4">"user_id": "user_456",</div>
-                <div className="ml-4">"created_at": "2024-01-15T10:30:00Z",</div>
-                <div className="ml-4">"tags": ["productivity", "ideas"]</div>
-                <div className="ml-2">{"}"},</div>
-                <div className="ml-2">"previous_attributes": null</div>
-                <div>{"}"}</div>
-              </div>
+              <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                <code>{`{
+  "id": "evt_1234567890",
+  "event": "note.created",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "api_version": "v1",
+  "data": {
+    "note_id": "note_123",
+    "title": "New Note",
+    "user_id": "user_456",
+    "created_at": "2024-01-15T10:30:00Z",
+    "tags": ["productivity", "ideas"]
+  },
+  "previous_attributes": null
+}`}</code>
+              </pre>
 
               <div className="grid gap-4 md:grid-cols-2">
                 <Button>
@@ -543,19 +542,18 @@ curl -X POST https://api.reflectsaas.com/v1/search \\
               <CardDescription>Configure which events to receive and apply filters</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
-                <div className="text-green-600">// Webhook configuration example</div>
-                <div>{"{"}</div>
-                <div className="ml-2">"url": "https://your-app.com/webhooks/reflect",</div>
-                <div className="ml-2">"events": ["note.created", "note.updated"],</div>
-                <div className="ml-2">"filters": {"{"}</div>
-                <div className="ml-4">"user_id": ["user_123", "user_456"],</div>
-                <div className="ml-4">"tags": ["important", "project-alpha"]</div>
-                <div className="ml-2">{"}"},</div>
-                <div className="ml-2">"active": true,</div>
-                <div className="ml-2">"secret": "whsec_..."</div>
-                <div>{"}"}</div>
-              </div>
+              <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                <code>{`{
+  "url": "https://your-app.com/webhooks/reflect",
+  "events": ["note.created", "note.updated"],
+  "filters": {
+    "user_id": ["user_123", "user_456"],
+    "tags": ["important", "project-alpha"]
+  },
+  "active": true,
+  "secret": "whsec_..."
+}`}</code>
+              </pre>
 
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="border rounded-lg p-3">
