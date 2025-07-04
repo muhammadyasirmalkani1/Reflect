@@ -246,24 +246,24 @@ export default function APIDocumentationPage() {
               <CardDescription>POST /api/v1/notes</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                <div className="text-green-600">// Request</div>
-                <div>curl -X POST https://api.reflectsaas.com/v1/notes \</div>
-                <div className="ml-2">-H "Authorization: Bearer YOUR_API_KEY" \</div>
-                <div className="ml-2">-H "Content-Type: application/json" \</div>
-                <div className="ml-2">{`-d '{"title": "My New Note", "content": "This is the note content", "tags": ["productivity", "ideas"]}'`}</div>
+              <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                <code>{`// Request
+curl -X POST https://api.reflectsaas.com/v1/notes \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"title": "My New Note", "content": "This is the note content", "tags": ["productivity", "ideas"]}'
 
-                <div className="mt-4 text-green-600">// Response</div>
-                <div>{"{"}</div>
-                <div className="ml-2">"success": true,</div>
-                <div className="ml-2">"data": {"{"}</div>
-                <div className="ml-4">"id": "note_123",</div>
-                <div className="ml-4">"title": "My New Note",</div>
-                <div className="ml-4">"created_at": "2024-01-15T10:30:00Z"</div>
-                <div className="ml-2">{"}"},</div>
-                <div className="ml-2">"message": "Note created successfully"</div>
-                <div>{"}"}</div>
-              </div>
+// Response
+{
+  "success": true,
+  "data": {
+    "id": "note_123",
+    "title": "My New Note",
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Note created successfully"
+}`}</code>
+              </pre>
             </CardContent>
           </Card>
 
@@ -273,23 +273,23 @@ export default function APIDocumentationPage() {
               <CardDescription>POST /api/v1/search</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                <div className="text-green-600">// Request</div>
-                <div>curl -X POST https://api.reflectsaas.com/v1/search \</div>
-                <div className="ml-2">-H "Authorization: Bearer YOUR_API_KEY" \</div>
-                <div className="ml-2">-H "Content-Type: application/json" \</div>
-                <div className="ml-2">{`-d '{"query": "productivity tips", "limit": 10, "semantic": true}'`}</div>
+              <pre className="bg-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                <code>{`// Request
+curl -X POST https://api.reflectsaas.com/v1/search \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"query": "productivity tips", "limit": 10, "semantic": true}'
 
-                <div className="mt-4 text-green-600">// Response</div>
-                <div>{"{"}</div>
-                <div className="ml-2">"success": true,</div>
-                <div className="ml-2">"data": {"{"}</div>
-                <div className="ml-4">"results": [...],</div>
-                <div className="ml-4">"total": 25</div>
-                <div className="ml-2">{"}"},</div>
-                <div className="ml-2">"message": "Search completed"</div>
-                <div>{"}"}</div>
-              </div>
+// Response
+{
+  "success": true,
+  "data": {
+    "results": [...],
+    "total": 25
+  },
+  "message": "Search completed"
+}`}</code>
+              </pre>
             </CardContent>
           </Card>
         </TabsContent>
